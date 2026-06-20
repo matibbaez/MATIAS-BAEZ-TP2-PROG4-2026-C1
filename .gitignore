@@ -1,0 +1,19 @@
+# Node
+node_modules/
+/backend/node_modules
+/frontend/node_modules
+
+# Compilados
+/backend/dist
+/frontend/dist
+
+# Entornos y Claves
+.env
+/backend/.env
+/frontend/src/environments/environment.ts
+/frontend/src/environments/environment.development.ts
+
+# Logs y SO
+npm-debug.log*
+.DS_Store
+.angular/
