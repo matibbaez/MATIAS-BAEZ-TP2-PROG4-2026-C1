@@ -1,0 +1,162 @@
+<div class="min-h-screen flex items-center justify-center p-4 md:p-6 bg-gray-950 font-sans select-none">
+  <div class="max-w-2xl w-full bg-gray-900 rounded-[2.5rem] p-8 md:p-10 border border-gray-800 shadow-2xl relative overflow-hidden">
+    
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-2 bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-40"></div>
+
+    <div class="text-center mb-8">
+      <h1 class="text-3xl md:text-4xl font-black text-white tracking-tight">Crear Cuenta</h1>
+      <p class="text-xs md:text-sm text-gray-400 mt-1">Plataforma de Red Social — Programación IV</p>
+    </div>
+
+    <div *ngIf="mensajeError" class="mb-6 p-4 bg-red-950/40 border border-red-800/80 rounded-2xl text-red-300 text-xs md:text-sm font-medium flex items-center gap-3">
+      <svg class="w-5 h-5 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      <span>{{ mensajeError }}</span>
+    </div>
+
+    <form [formGroup]="registroForm" (ngSubmit)="onSubmit()" class="space-y-5">
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">Nombre</label>
+          <input type="text" formControlName="nombre" placeholder="Matías"
+                 class="w-full bg-gray-950 border rounded-xl px-4 py-3 text-gray-100 text-sm focus:outline-none transition-colors"
+                 [ngClass]="registroForm.get('nombre')?.invalid && registroForm.get('nombre')?.touched ? 'border-red-500/80 focus:border-red-500' : 'border-gray-800 focus:border-blue-500'">
+          
+          <div *ngIf="registroForm.get('nombre')?.invalid && registroForm.get('nombre')?.touched" class="text-[11px] text-red-400 mt-1 font-medium">
+            <span *ngIf="registroForm.get('nombre')?.errors?.['required']">El nombre es obligatorio.</span>
+            <span *ngIf="registroForm.get('nombre')?.errors?.['soloEspacios']">No se admiten solo espacios.</span>
+            <span *ngIf="registroForm.get('nombre')?.errors?.['minlength']">Mínimo 2 caracteres.</span>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">Apellido</label>
+          <input type="text" formControlName="apellido" placeholder="Báez"
+                 class="w-full bg-gray-950 border rounded-xl px-4 py-3 text-gray-100 text-sm focus:outline-none transition-colors"
+                 [ngClass]="registroForm.get('apellido')?.invalid && registroForm.get('apellido')?.touched ? 'border-red-500/80 focus:border-red-500' : 'border-gray-800 focus:border-blue-500'">
+          
+          <div *ngIf="registroForm.get('apellido')?.invalid && registroForm.get('apellido')?.touched" class="text-[11px] text-red-400 mt-1 font-medium">
+            <span *ngIf="registroForm.get('apellido')?.errors?.['required']">El apellido es obligatorio.</span>
+            <span *ngIf="registroForm.get('apellido')?.errors?.['soloEspacios']">No se admiten solo espacios.</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">Correo Electrónico Institucional</label>
+        <input type="email" formControlName="correo" placeholder="usuario@utn.edu.ar"
+               class="w-full bg-gray-950 border rounded-xl px-4 py-3 text-gray-100 text-sm focus:outline-none transition-colors"
+               [ngClass]="registroForm.get('correo')?.invalid && registroForm.get('correo')?.touched ? 'border-red-500/80 focus:border-red-500' : 'border-gray-800 focus:border-blue-500'">
+        <span *ngIf="registroForm.get('correo')?.invalid && registroForm.get('correo')?.touched" class="text-[11px] text-red-400 mt-1 block font-medium">Ingresá una dirección de correo válida</span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">Identificador de Usuario</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-600 font-bold">@</span>
+            <input type="text" formControlName="nombreUsuario" placeholder="matiasbaez"
+                   class="w-full bg-gray-950 border rounded-xl pl-9 pr-4 py-3 text-gray-100 text-sm focus:outline-none transition-colors"
+                   [ngClass]="registroForm.get('nombreUsuario')?.invalid && registroForm.get('nombreUsuario')?.touched ? 'border-red-500/80 focus:border-red-500' : 'border-gray-800 focus:border-blue-500'">
+          </div>
+          
+          <div *ngIf="registroForm.get('nombreUsuario')?.invalid && registroForm.get('nombreUsuario')?.touched" class="text-[11px] text-red-400 mt-1 font-medium">
+            <span *ngIf="registroForm.get('nombreUsuario')?.errors?.['required']">El usuario es requerido.</span>
+            <span *ngIf="registroForm.get('nombreUsuario')?.errors?.['soloEspacios']">No puede estar vacío.</span>
+            <span *ngIf="registroForm.get('nombreUsuario')?.errors?.['minlength']">Mínimo 3 caracteres.</span>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">Fecha de Nacimiento</label>
+          <input type="date" formControlName="fechaNacimiento"
+                 class="w-full bg-gray-950 border rounded-xl px-4 py-3 text-gray-100 text-sm focus:outline-none transition-colors cursor-pointer"
+                 [ngClass]="registroForm.get('fechaNacimiento')?.invalid && registroForm.get('fechaNacimiento')?.touched ? 'border-red-500/80 focus:border-red-500' : 'border-gray-800 focus:border-blue-500'">
+          
+          <div *ngIf="registroForm.get('fechaNacimiento')?.invalid && registroForm.get('fechaNacimiento')?.touched" class="text-[11px] text-red-400 mt-1 font-medium">
+            <span *ngIf="registroForm.get('fechaNacimiento')?.errors?.['required']">Seleccioná tu fecha.</span>
+            <span *ngIf="registroForm.get('fechaNacimiento')?.errors?.['fechaFutura']">No podés ingresar fechas futuras.</span>
+            <span *ngIf="registroForm.get('fechaNacimiento')?.errors?.['menorDe16']">Debes poseer 16 años o más para acceder.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">Contraseña de Seguridad</label>
+          <input type="password" formControlName="contrasena" placeholder="••••••••"
+                 class="w-full bg-gray-950 border rounded-xl px-4 py-3 text-gray-100 text-sm focus:outline-none transition-colors tracking-widest"
+                 [ngClass]="registroForm.get('contrasena')?.invalid && registroForm.get('contrasena')?.touched ? 'border-red-500/80 focus:border-red-500' : 'border-gray-800 focus:border-blue-500'">
+          
+          <div *ngIf="registroForm.get('contrasena')?.touched && registroForm.get('contrasena')?.invalid" class="text-[11px] text-red-400 mt-1 font-medium space-y-0.5">
+            <p *ngIf="registroForm.get('contrasena')?.errors?.['required']">• El campo es obligatorio.</p>
+            <p *ngIf="registroForm.get('contrasena')?.errors?.['minlength']">• Debe contener 8 caracteres o más.</p>
+            <p *ngIf="registroForm.get('contrasena')?.errors?.['claveInsegura']">• Requiere al menos 1 Mayúscula y 1 Número.</p>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">Confirmar Contraseña</label>
+          <input type="password" formControlName="repetirContrasena" placeholder="••••••••"
+                 class="w-full bg-gray-950 border rounded-xl px-4 py-3 text-gray-100 text-sm focus:outline-none transition-colors tracking-widest"
+                 [ngClass]="registroForm.hasError('noCoinciden') && registroForm.get('repetirContrasena')?.touched ? 'border-red-500/80 focus:border-red-500' : 'border-gray-800 focus:border-blue-500'">
+          <span *ngIf="registroForm.hasError('noCoinciden') && registroForm.get('repetirContrasena')?.touched" class="text-[11px] text-red-400 mt-1 block font-medium">Las contraseñas no son idénticas</span>
+        </div>
+      </div>
+
+      <div>
+        <div class="flex justify-between items-center mb-1.5">
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-400">
+            Biografía / Presentación Académica <span class="lowercase text-gray-600 font-normal ml-1">(opcional)</span>
+          </label>
+          <span class="text-[10px] font-mono text-gray-500">
+            {{ registroForm.get('descripcion')?.value?.length || 0 }} / 250
+          </span>
+        </div>
+        <textarea formControlName="descripcion" rows="2" maxlength="250" placeholder="Estudiante de la Tecnicatura Universitaria en Programación, desarrollador web de Lanús..."
+                  class="w-full bg-gray-950 border border-gray-800 focus:border-blue-500 rounded-xl px-4 py-3 text-gray-100 text-sm focus:outline-none transition-colors resize-none"></textarea>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center bg-gray-950/80 p-4 rounded-2xl border border-gray-800/80">
+        
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400">Nivel de Privilegios</label>
+            <span class="text-[9px] text-amber-500/70 font-mono tracking-tighter">〔Modo Cátedra〕</span>
+          </div>
+          <select formControlName="perfil" class="w-full bg-gray-900 border border-gray-700 text-gray-200 text-xs rounded-lg px-3 py-2.5 focus:outline-none focus:border-blue-500 cursor-pointer font-medium">
+            <option value="usuario">Cuenta Estándar (Usuario)</option>
+            <option value="administrador">Acceso Total (Administrador)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Fotografía de Perfil</label>
+          <input type="file" (change)="onArchivoSeleccionado($event)" accept="image/*"
+                 class="w-full text-xs text-gray-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-[11px] file:font-bold file:bg-gray-800 file:text-gray-200 hover:file:bg-gray-700 file:cursor-pointer cursor-pointer transition-colors">
+        </div>
+
+      </div>
+
+      <button type="submit" [disabled]="cargando" 
+              class="w-full bg-blue-600 hover:bg-blue-500 active:scale-[0.99] disabled:opacity-50 text-white font-black py-4 rounded-xl shadow-lg hover:shadow-blue-500/20 transition-all uppercase tracking-widest text-xs md:text-sm flex items-center justify-center gap-2 cursor-pointer mt-4">
+        <svg *ngIf="cargando" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+        </svg>
+        <span>{{ cargando ? 'Procesando credenciales en la nube...' : 'Completar Registro' }}</span>
+      </button>
+
+    </form>
+
+    <div class="mt-8 text-center border-t border-gray-800/80 pt-6">
+      <p class="text-xs text-gray-400">
+        ¿Ya posees credenciales de acceso? 
+        <a routerLink="/login" class="text-blue-400 font-bold hover:text-blue-300 transition-colors ml-1">Ingresar al sistema</a>
+      </p>
+    </div>
+
+  </div>
+</div>
