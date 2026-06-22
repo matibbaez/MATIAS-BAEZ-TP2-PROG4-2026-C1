@@ -3,7 +3,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import { UsuariosModule } from './usuarios/usuarios.module';
 import { AuthModule } from './auth/auth.module';
-import { PublicacionesModule } from './publicaciones/publicaciones.module';
+import { PublicacionesModule } from './publicaciones/publicaciones.module'; 
+import { CloudinaryModule } from './cloudinary/cloudinary.module'; 
 
 @Module({
   imports: [
@@ -13,7 +14,8 @@ import { PublicacionesModule } from './publicaciones/publicaciones.module';
     MongooseModule.forRoot(process.env.MONGO_URI!),
     UsuariosModule,
     AuthModule,
-    PublicacionesModule,
+    PublicacionesModule, 
+    CloudinaryModule,    
   ],
   controllers: [],
   providers: [],

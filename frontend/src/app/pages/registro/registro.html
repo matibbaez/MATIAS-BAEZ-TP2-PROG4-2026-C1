@@ -133,9 +133,22 @@
         </div>
 
         <div>
-          <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Fotografía de Perfil</label>
-          <input type="file" (change)="onArchivoSeleccionado($event)" accept="image/*"
-                 class="w-full text-xs text-gray-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-[11px] file:font-bold file:bg-gray-800 file:text-gray-200 hover:file:bg-gray-700 file:cursor-pointer cursor-pointer transition-colors">
+          <label class="block text-xs text-gray-400 mb-1">Foto de Perfil (Opcional)</label>
+          
+          <div class="flex items-center gap-2.5">
+            <div class="w-10 h-10 rounded-full bg-gray-900 border border-gray-700 overflow-hidden shrink-0 flex items-center justify-center text-gray-500 shadow-inner">
+              <img *ngIf="previewUrl" [src]="previewUrl" class="w-full h-full object-cover transition-all">
+              <svg *ngIf="!previewUrl" class="w-5 h-5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+              </svg>
+            </div>
+
+            <input type="file" 
+                   (change)="seleccionarImagen($event)" 
+                   accept="image/png, image/jpeg, image/webp"
+                   class="w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[11px] file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-500 file:cursor-pointer bg-gray-900 border border-gray-800 rounded-xl p-1 transition-all">
+          </div>
+
         </div>
 
       </div>

@@ -1,23 +1,32 @@
 import { Controller, Post, Body, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthService } from './auth.service';
 import { RegistroDto } from './dto/registro.dto';
 import { LoginDto } from './dto/login.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { CloudinaryService } from '../cloudinary/cloudinary.service'; 
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly cloudinaryService: CloudinaryService, 
+  ) {}
 
   @Post('register')
   @UseInterceptors(FileInterceptor('file'))
   async registrar(
     @Body() registroDto: RegistroDto,
-    @UploadedFile() file: any
+    @UploadedFile() file: Express.Multer.File, 
   ) {
-    let urlFoto = '';
+    let urlFoto = `https://api.dicebear.com/7.x/initials/svg?seed=${registroDto.nombre}+${registroDto.apellido}&backgroundColor=2563eb&textColor=ffffff`;
+
     if (file) {
-      urlFoto = `https://avatar.iran.liara.run/username?username=${registroDto.nombre}+${registroDto.apellido}`;
+      console.log('☁️ [CLOUDINARY] Subiendo archivo adjunto a la nube...');
+      const resultado = await this.cloudinaryService.subirImagen(file);
+      urlFoto = resultado.secure_url;
+      console.log('✅ [CLOUDINARY] Enlace público obtenido:', urlFoto);
     }
+
     return this.authService.registrar(registroDto, urlFoto);
   }
 
