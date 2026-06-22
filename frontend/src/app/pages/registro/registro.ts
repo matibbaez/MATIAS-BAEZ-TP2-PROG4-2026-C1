@@ -17,6 +17,7 @@ export class RegistroComponent {
 
   registroForm: FormGroup;
   archivoSeleccionado: File | null = null;
+  previewUrl: string | null = null;
   cargando = false;
   mensajeError = '';
 
@@ -36,30 +37,20 @@ export class RegistroComponent {
     });
   }
 
-  // --- No permite enviar un campo lleno de espacios ---
   private validarNoVacio(control: AbstractControl): ValidationErrors | null {
     const texto = (control.value || '').trim();
     return texto.length === 0 ? { soloEspacios: true } : null;
   }
 
-  // --- VALIDADOR DE EDAD: Mínimo 16 años y prohíbe nacer mañana ---
   private validarEdadMinima(control: AbstractControl): ValidationErrors | null {
     if (!control.value) return null;
-
     const fechaNacimiento = new Date(control.value);
     const hoy = new Date();
+    if (fechaNacimiento > hoy) return { fechaFutura: true };
 
-    if (fechaNacimiento > hoy) {
-      return { fechaFutura: true };
-    }
-
-    // 2. Cálculo de edad bisiesta exacta
     let edad = hoy.getFullYear() - fechaNacimiento.getFullYear();
     const mes = hoy.getMonth() - fechaNacimiento.getMonth();
-    
-    if (mes < 0 || (mes === 0 && hoy.getDate() < fechaNacimiento.getDate())) {
-      edad--;
-    }
+    if (mes < 0 || (mes === 0 && hoy.getDate() < fechaNacimiento.getDate())) edad--;
 
     return edad < 16 ? { menorDe16: true } : null;
   }
@@ -77,10 +68,19 @@ export class RegistroComponent {
     return pass === repeat ? null : { noCoinciden: true };
   }
 
-  onArchivoSeleccionado(event: any) {
+  seleccionarImagen(event: any) {
     const archivo = event.target.files[0];
     if (archivo) {
       this.archivoSeleccionado = archivo;
+      
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.previewUrl = reader.result as string;
+      };
+      reader.readAsDataURL(archivo);
+    } else {
+      this.archivoSeleccionado = null;
+      this.previewUrl = null;
     }
   }
 
@@ -98,7 +98,8 @@ export class RegistroComponent {
 
     Object.keys(valores).forEach(key => {
       if (key !== 'repetirContrasena') {
-        const datoLimpio = typeof valores[key] === 'string' ? valores[key].trim() : valores[key];
+        const valor = valores[key];
+        const datoLimpio = typeof valor === 'string' ? valor.trim() : valor;
         formData.append(key, datoLimpio);
       }
     });
