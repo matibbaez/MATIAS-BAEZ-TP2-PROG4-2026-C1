@@ -1,24 +1,79 @@
 <app-navbar />
 
-<div class="min-h-[100dvh] bg-gray-950 pt-20 pb-24 md:pb-12 px-4 flex flex-col items-center justify-center text-center select-none">
-  <div class="max-w-md w-full bg-gray-900/60 backdrop-blur-xl border border-gray-800/80 p-8 md:p-10 rounded-3xl shadow-2xl relative overflow-hidden">
+<div class="min-h-[100dvh] bg-gray-950 pt-20 pb-24 md:pb-12 px-4 flex flex-col items-center select-none">
+  <div class="max-w-xl w-full space-y-6">
     
-    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-1 bg-gradient-to-r from-transparent via-blue-500/50 to-transparent"></div>
+    <div class="bg-gray-900 border border-gray-800 rounded-3xl p-4 md:p-5 shadow-xl relative overflow-hidden">
+      <div class="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-600/30 via-blue-500/50 to-blue-600/30"></div>
+      
+      <div class="flex gap-3.5">
+        <img *ngIf="usuarioLogueado" [src]="usuarioLogueado.imagenPerfil" 
+             class="w-9 h-9 rounded-full object-cover border border-gray-800 shrink-0 mt-0.5">
+        
+        <div class="flex-1 space-y-3">
+          <textarea [(ngModel)]="nuevoPostTexto" rows="3" maxlength="280"
+                    placeholder="¿Qué estás investigando hoy, {{ usuarioLogueado?.nombre }}?"
+                    class="w-full bg-transparent text-gray-100 text-sm focus:outline-none resize-none placeholder-gray-500 leading-relaxed py-1.5"
+                    [disabled]="publicando"></textarea>
+          
+          <div class="flex items-center justify-between border-t border-gray-800/60 pt-3">
+            <span class="text-[10px] font-mono text-gray-500">
+              {{ nuevoPostTexto?.length || 0 }} / 280
+            </span>
 
-    <div class="w-14 h-14 bg-gradient-to-tr from-blue-600/20 to-blue-500/10 border border-blue-500/30 rounded-2xl flex items-center justify-center text-blue-400 mb-5 mx-auto shadow-lg shadow-blue-500/10">
-      <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
-      </svg>
+            <button (click)="realizarPosteo()" 
+                    [disabled]="publicando || !nuevoPostTexto || nuevoPostTexto.trim().length === 0"
+                    class="bg-blue-600 hover:bg-blue-500 disabled:opacity-40 disabled:hover:bg-blue-600 text-white text-xs font-black px-4 py-2 rounded-xl transition-all cursor-pointer shadow-lg shadow-blue-600/10 flex items-center gap-1.5">
+              <svg *ngIf="publicando" class="animate-spin h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <span>{{ publicando ? 'Emitiendo...' : 'Publicar' }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <h2 class="text-xl md:text-2xl font-black text-white tracking-tight mb-2">Muro de Publicaciones</h2>
-    <p class="text-xs md:text-sm text-gray-400 leading-relaxed">
-      El motor de renderizado del feed está en <span class="text-gray-300 italic">standby</span>. La conexión con la colección <span class="font-mono text-blue-400">/publicaciones</span> de MongoDB se activará en el Sprint 2.
-    </p>
+    <div *ngIf="cargandoFeed" class="text-center py-12 space-y-3">
+      <div class="w-7 h-7 border-2 border-blue-500/20 border-t-blue-500 rounded-full animate-spin mx-auto"></div>
+      <p class="text-xs font-mono text-gray-500 tracking-wider uppercase">Sincronizando con base de datos...</p>
+    </div>
 
-    <div class="mt-6 pt-6 border-t border-gray-800/60 space-y-2.5">
-      <div class="h-2 bg-gray-800/60 rounded-full w-3/4 mx-auto animate-pulse"></div>
-      <div class="h-1.5 bg-gray-800/40 rounded-full w-1/2 mx-auto animate-pulse"></div>
+    <div *ngIf="!cargandoFeed" class="space-y-4">
+      
+      <div *ngIf="feed.length === 0" class="bg-gray-900/40 border border-gray-800/80 p-10 rounded-3xl text-center">
+        <div class="w-12 h-12 bg-gray-800/50 rounded-2xl flex items-center justify-center text-gray-600 mx-auto mb-3">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+          </svg>
+        </div>
+        <h4 class="text-sm font-bold text-gray-300">Aún no hay publicaciones</h4>
+        <p class="text-xs text-gray-500 mt-1">Sé el primero en iniciar la conversación académica.</p>
+      </div>
+
+      <div *ngFor="let post of feed" 
+           class="bg-gray-900 border border-gray-800/80 rounded-3xl p-4 md:p-5 shadow-lg flex gap-3.5 transition-all hover:border-gray-700/60 animate-fade-in">
+        
+        <img [src]="post.autorImagen || 'assets/avatar-default.png'" 
+             class="w-9 h-9 rounded-full object-cover border border-gray-800 shrink-0">
+
+        <div class="flex-1 min-w-0">
+          <div class="flex flex-wrap items-baseline gap-1.5 mb-1.5">
+            <span class="text-xs font-black text-gray-200 tracking-tight truncate">{{ post.autorNombre }}</span>
+            <span class="text-[11px] text-gray-500 truncate">@{{ post.autorUsuario }}</span>
+            <span class="text-[11px] text-gray-600 font-mono ml-auto shrink-0">
+              {{ post.createdAt | date:'HH:mm' }}
+            </span>
+          </div>
+
+          <p class="text-gray-300 text-xs md:text-sm leading-relaxed text-left whitespace-pre-wrap select-text break-words">
+            {{ post.texto }}
+          </p>
+        </div>
+
+      </div>
+
     </div>
 
   </div>
