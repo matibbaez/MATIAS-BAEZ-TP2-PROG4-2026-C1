@@ -7,7 +7,8 @@ import { firstValueFrom } from 'rxjs';
 })
 export class AuthService {
   private http = inject(HttpClient);
-  private baseUrl = 'http://localhost:3000/auth';
+  // private baseUrl = 'http://localhost:3000/auth';
+  private baseUrl = 'https://tp-utn-back.onrender.com/auth';
 
   async registrar(formData: FormData) {
     return firstValueFrom(
