@@ -3,8 +3,17 @@ import { Document } from 'mongoose';
 
 @Schema({ timestamps: true }) 
 export class Publicacion extends Document {
-  @Prop({ required: true })
-  texto!: string; 
+  @Prop({ 
+    required: true, 
+    maxlength: [60, 'El título no puede superar los 60 caracteres.'] 
+  })
+  titulo!: string; 
+
+  @Prop({ 
+    required: true, 
+    maxlength: [280, 'La descripción no puede superar los 280 caracteres.'] 
+  })
+  descripcion!: string;
 
   @Prop()
   imagenUrl?: string;
@@ -21,8 +30,14 @@ export class Publicacion extends Document {
   @Prop()
   autorImagen?: string;
 
-  @Prop({ default: 0 })
-  likes!: number;
+  @Prop({ type: [String], default: [] })
+  likes!: string[];
+
+  @Prop({ default: true })
+  activo!: boolean;
+
+  @Prop({ default: [] })
+  comentarios!: any[];
 }
 
 export const PublicacionSchema = SchemaFactory.createForClass(Publicacion);

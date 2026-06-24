@@ -1,0 +1,103 @@
+<article class="bg-gray-900 border border-gray-800 rounded-3xl p-5 md:p-6 shadow-xl hover:border-gray-700/80 transition-all text-left relative">
+  
+  <div class="flex items-center justify-between mb-4">
+    <div class="flex items-center gap-3">
+      
+      <div class="w-10 h-10 rounded-full bg-gray-800 border border-gray-700 overflow-hidden shrink-0 shadow-inner">
+        <img [src]="post.autorImagen || ('https://api.dicebear.com/7.x/initials/svg?seed=' + post.autorNombre)" 
+             class="w-full h-full object-cover" 
+             alt="Avatar">
+      </div>
+
+      <div>
+        <h4 class="text-sm font-black text-white leading-tight">{{ post.autorNombre }}</h4>
+        <p class="text-xs text-gray-400 font-mono">@{{ post.autorUsuario }} • {{ post.createdAt | date:'shortDate' }}</p>
+      </div>
+
+    </div>
+
+    @if (post.autorId === miUsuarioId || miRol === 'administrador') {
+      <button (click)="abrirModalEliminar()" title="Eliminar publicación"
+              class="text-gray-500 hover:text-red-400 p-2 rounded-xl hover:bg-red-950/40 active:scale-95 transition-all cursor-pointer">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+        </svg>
+      </button>
+    }
+  </div>
+
+  <div class="mb-4 space-y-1.5 min-w-0">
+    <h3 class="text-lg font-black text-blue-400 tracking-tight break-words">{{ post.titulo }}</h3>
+    <p class="text-xs md:text-sm text-gray-200 leading-relaxed whitespace-pre-line font-normal break-words">{{ post.descripcion }}</p>
+  </div>
+
+  @if (post.imagenUrl) {
+    <div class="mb-4 rounded-2xl overflow-hidden border border-gray-800 bg-black/50 max-h-80 flex items-center justify-center shadow-lg">
+      <img [src]="post.imagenUrl" class="max-h-80 w-full object-cover" alt="Imagen adjunta">
+    </div>
+  }
+
+  <div class="flex items-center justify-between pt-3 border-t border-gray-800/80 text-xs text-gray-400">
+    
+    <button (click)="onLikeClick()" 
+            class="flex items-center gap-2 px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer select-none active:scale-110"
+            [ngClass]="diLike ? 'bg-red-950/80 text-red-400 border border-red-800/80 shadow-lg shadow-red-950/50' : 'bg-gray-800/50 text-gray-400 hover:bg-gray-800 hover:text-gray-200'">
+      <svg class="w-4 h-4" [ngClass]="diLike ? 'fill-current text-red-500' : 'fill-none'" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+      </svg>
+      <span>{{ post.likes?.length || 0 }}</span>
+    </button>
+
+    <div class="flex items-center gap-1.5 text-gray-500 font-medium">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+      </svg>
+      <span>{{ post.comentarios?.length || 0 }} comentarios</span>
+    </div>
+
+  </div>
+
+  @if (post.comentarios && post.comentarios.length > 0) {
+    <div class="mt-3 pt-3 border-t border-gray-800/40 space-y-2">
+      @for (com of post.comentarios; track com) {
+        <div class="bg-gray-950/60 p-2.5 rounded-xl text-xs border border-gray-800/60">
+          <span class="font-bold text-blue-400">@{{ com.autor }}:</span> 
+          <span class="text-gray-300 ml-1">{{ com.texto }}</span>
+        </div>
+      }
+    </div>
+  }
+
+  @if (mostrarModalBorrar) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs animate-fade-in">
+      <div class="bg-gray-900 border border-gray-800 rounded-[2rem] p-6 max-w-sm w-full shadow-2xl space-y-5 text-center">
+        
+        <div class="w-14 h-14 bg-red-950/60 border border-red-800/80 rounded-2xl flex items-center justify-center text-red-500 mx-auto shadow-inner">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+          </svg>
+        </div>
+
+        <div>
+          <h3 class="text-base font-black text-white">¿Eliminar publicación?</h3>
+          <p class="text-xs text-gray-400 mt-1.5 leading-relaxed">
+            Esta acción dará de baja el documento del feed principal. No podrás visualizarlo nuevamente.
+          </p>
+        </div>
+
+        <div class="flex gap-3 pt-2">
+          <button (click)="cancelarEliminacion()" 
+                  class="flex-1 bg-gray-800 hover:bg-gray-700 text-gray-300 font-bold text-xs py-3 rounded-xl transition-all cursor-pointer">
+            Cancelar
+          </button>
+          <button (click)="confirmarEliminacion()" 
+                  class="flex-1 bg-red-600 hover:bg-red-500 text-white font-black text-xs py-3 rounded-xl shadow-lg shadow-red-600/20 transition-all cursor-pointer">
+            Sí, eliminar
+          </button>
+        </div>
+
+      </div>
+    </div>
+  }
+
+</article>
