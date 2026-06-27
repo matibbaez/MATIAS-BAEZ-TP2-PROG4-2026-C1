@@ -41,13 +41,16 @@ export class PublicacionesService {
     if (orden === 'likes') {
       return this.publicacionModel.aggregate([
         { $match: query },
+        // campo temporal cantidad de likes
         { $addFields: { cantidadLikes: { $size: { $ifNull: ['$likes', []] } } } },
+        // por cantidad de likes (mayor menor)
         { $sort: { cantidadLikes: -1, createdAt: -1 } },
         { $skip: offsetNum },
         { $limit: limiteNum },
       ]).exec();
     } else {
       return this.publicacionModel.find(query)
+      // mas nueva a mas vieja
         .sort({ createdAt: -1 })
         .skip(offsetNum)
         .limit(limiteNum)
@@ -67,7 +70,6 @@ export class PublicacionesService {
     return post.save();
   }
 
-  // 4. DAR ME GUSTA
   async darLike(id: string, usuarioId: string) {
     const post = await this.publicacionModel.findById(id);
     if (!post) throw new NotFoundException('Publicación no encontrada');
