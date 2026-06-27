@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Post, Body, UseInterceptors, UploadedFile, HttpCode, HttpStatus } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthService } from './auth.service';
 import { RegistroDto } from './dto/registro.dto';
@@ -33,5 +33,17 @@ export class AuthController {
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
+  }
+
+  @Post('autorizar')
+  @HttpCode(HttpStatus.OK)
+  async autorizar(@Body() body: { token: string }) {
+    return await this.authService.autorizar(body);
+  }
+
+  @Post('refrescar')
+  @HttpCode(HttpStatus.OK)
+  async refrescar(@Body() body: { token: string }) {
+    return await this.authService.refrescar(body);
   }
 }
