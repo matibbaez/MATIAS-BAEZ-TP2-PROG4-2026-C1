@@ -10,7 +10,7 @@ import { UsuariosModule } from '../usuarios/usuarios.module';
     
     JwtModule.register({
       global: true,
-      secret: 'CLAVE_SECRETA_TP2_PROG4_2026',
+      secret: process.env.JWT_SECRET || 'CLAVE_SECRETA_TP2_PROG4_2026',
       signOptions: { expiresIn: '15m' }, 
     }),
   ],

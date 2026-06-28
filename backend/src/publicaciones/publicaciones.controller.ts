@@ -64,4 +64,36 @@ export class PublicacionesController {
     if (!usuarioId) throw new BadRequestException('Falta el ID del usuario');
     return this.publicacionesService.quitarLike(id, usuarioId);
   }
+
+  @Get(':id')
+  async obtenerUna(@Param('id') id: string) {
+    return this.publicacionesService.obtenerPorId(id);
+  }
+
+  @Post(':id/comentarios')
+  async agregarComentario(
+    @Param('id') id: string,
+    @Body() body: { autorId: string; autorNombre: string; autorUsuario: string; autorImagen?: string; texto: string }
+  ) {
+    if (!body?.texto || body.texto.trim().length === 0) {
+      throw new BadRequestException('El comentario no puede estar vacío');
+    }
+
+    if (body.texto.length > 300) {
+      throw new BadRequestException('El comentario excede el límite de 300 caracteres.');
+    }
+
+    body.texto = body.texto.trim().replace(/\n{3,}/g, '\n\n');
+
+    return this.publicacionesService.comentar(id, body);
+  }
+
+  @Post(':id/editar')
+  async editarPublicacion(
+    @Param('id') id: string,
+    @Body() body: { usuarioId: string; descripcion: string }
+  ) {
+    if (!body.descripcion) throw new BadRequestException('La descripción no puede quedar vacía');
+    return this.publicacionesService.editar(id, body.usuarioId, body.descripcion);
+  }
 }

@@ -1,4 +1,5 @@
-<main class="min-h-screen bg-gray-950 text-gray-100 font-sans selection:bg-blue-500 selection:text-white">
+<main class="min-h-screen bg-gray-950 text-gray-100 font-sans selection:bg-blue-500 selection:text-white relative">
+  
   @if (authService.verificandoSesion()) {
     <div class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gray-950">
       <div class="relative flex items-center justify-center">
@@ -12,4 +13,46 @@
   } @else {
     <router-outlet />
   }
+
+  @if (authService.mostrarModalSesion()) {
+    <div class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fade-in">
+      
+      <div class="w-full max-w-md rounded-2xl bg-gray-900 border border-gray-800 p-6 shadow-2xl text-center relative overflow-hidden">
+        
+        <div class="absolute top-0 left-0 right-0 h-1.5 bg-amber-500"></div>
+
+        <div class="mx-auto mt-2 flex h-14 w-14 items-center justify-center rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-7 h-7">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+          </svg>
+        </div>
+
+        <h3 class="mt-4 text-xl font-bold text-white tracking-wide">
+          Sesión por vencer
+        </h3>
+        
+        <p class="mt-2 text-sm text-gray-400 leading-relaxed">
+          Han pasado 10 minutos de inactividad. Por seguridad, tu token caducará definitivamente en <span class="text-amber-400 font-semibold">5 minutos</span>. ¿Deseas extender tu sesión?
+        </p>
+
+        <div class="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
+          <button 
+            type="button"
+            (click)="authService.extenderSesion()"
+            class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-medium text-sm transition-all shadow-lg shadow-blue-600/30 active:scale-95">
+            Sí, extender sesión
+          </button>
+
+          <button 
+            type="button"
+            (click)="authService.cerrarSesion()"
+            class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium text-sm transition-all active:scale-95">
+            Cerrar ahora
+          </button>
+        </div>
+
+      </div>
+    </div>
+  }
+
 </main>

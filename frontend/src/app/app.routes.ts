@@ -3,6 +3,7 @@ import { LoginComponent } from './pages/login/login';
 import { RegistroComponent } from './pages/registro/registro';
 import { PublicacionesComponent } from './pages/publicaciones/publicaciones';
 import { MiPerfilComponent } from './pages/mi-perfil/mi-perfil';
+import { DetallePublicacionComponent } from './pages/detalle-publicacion/detalle-publicacion'; 
 import { authGuard, noAuthGuard } from './guards/auth';
 
 export const routes: Routes = [
@@ -13,6 +14,8 @@ export const routes: Routes = [
 
   { path: 'publicaciones', component: PublicacionesComponent, canActivate: [authGuard] },
   { path: 'mi-perfil', component: MiPerfilComponent, canActivate: [authGuard] },
+
+  { path: 'publicacion/:id', component: DetallePublicacionComponent, canActivate: [authGuard] },
 
   { path: '**', redirectTo: '/login' } 
 ];

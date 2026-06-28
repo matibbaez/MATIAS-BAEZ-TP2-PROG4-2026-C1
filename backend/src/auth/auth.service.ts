@@ -75,12 +75,9 @@ export class AuthService {
     }
 
     try {
-      const payload = await this.jwtService.verifyAsync(body.token, {
-        secret: 'CLAVE_SECRETA_super_blindada_TP2_PROG4_2026'
-      });
+      const payload = await this.jwtService.verifyAsync(body.token);
 
       const usuario: any = await this.usuariosService.buscarPorCorreo(payload.correo);
-      
       const estaActivo = usuario?.activo !== false; 
 
       if (!usuario || !estaActivo) {
@@ -92,7 +89,7 @@ export class AuthService {
       
       return usuarioLimpio;
 
-    } catch (error: any) { 
+    } catch (error: any) {
       console.log('❌ [AUTH] Falló la autorización en NestJS:', error?.message || 'Error desconocido'); 
       throw new UnauthorizedException('Token inválido o expirado');
     }
@@ -104,9 +101,7 @@ export class AuthService {
     }
 
     try {
-      const payload = await this.jwtService.verifyAsync(body.token, {
-        secret: 'CLAVE_SECRETA_super_blindada_TP2_PROG4_2026'
-      });
+      const payload = await this.jwtService.verifyAsync(body.token);
 
       const nuevoPayload = {
         sub: payload.sub,
@@ -116,9 +111,10 @@ export class AuthService {
       };
 
       return {
-        token: await this.jwtService.signAsync(nuevoPayload, { expiresIn: '15m' })
+        token: await this.jwtService.signAsync(nuevoPayload)
       };
-    } catch {
+    } catch (error: any) {
+      console.log('❌ [AUTH] Falló el refresh en NestJS:', error?.message);
       throw new UnauthorizedException('No se puede refrescar: la sesión ya expiró');
     }
   }

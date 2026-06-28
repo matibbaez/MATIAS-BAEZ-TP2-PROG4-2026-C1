@@ -1,10 +1,11 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-publicacion-card',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './publicacion-card.html'
 })
 export class PublicacionCardComponent {
@@ -16,6 +17,11 @@ export class PublicacionCardComponent {
   @Output() eliminar = new EventEmitter<string>();
 
   mostrarModalBorrar = false;
+
+  get comentariosPreview() {
+    if (!this.post?.comentarios) return [];
+    return this.post.comentarios.slice(0, 3);
+  }
 
   get diLike(): boolean {
     if (!this.post?.likes || !this.miUsuarioId) return false;

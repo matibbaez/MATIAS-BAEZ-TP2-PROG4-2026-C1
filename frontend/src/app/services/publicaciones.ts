@@ -7,6 +7,8 @@ import { Observable } from 'rxjs';
 })
 export class PublicacionesService {
   private http = inject(HttpClient);
+  
+  // private baseUrl = 'http://localhost:3000/publicaciones';
   private baseUrl = 'https://matias-baez-tp2-prog4-2026-c1.onrender.com/publicaciones'; 
 
   obtenerFeed(orden: string = 'fecha', limit: number = 5, offset: number = 0, usuario?: string): Observable<any[]> {
@@ -38,5 +40,17 @@ export class PublicacionesService {
   eliminar(id: string, usuarioId: string, rol: string): Observable<any> {
     const params = new HttpParams().set('usuarioId', usuarioId).set('rol', rol);
     return this.http.delete<any>(`${this.baseUrl}/${id}`, { params });
+  }
+
+  obtenerPorId(id: string): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/${id}`);
+  }
+
+  agregarComentario(id: string, datosComentario: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/${id}/comentarios`, datosComentario);
+  }
+
+  editarPublicacion(id: string, usuarioId: string, descripcion: string): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/${id}/editar`, { usuarioId, descripcion });
   }
 }

@@ -38,6 +38,9 @@ export class Publicacion extends Document {
 
   @Prop({ default: [] })
   comentarios!: any[];
+
+  @Prop({ default: false })
+  modificado!: boolean;
 }
 
 export const PublicacionSchema = SchemaFactory.createForClass(Publicacion);

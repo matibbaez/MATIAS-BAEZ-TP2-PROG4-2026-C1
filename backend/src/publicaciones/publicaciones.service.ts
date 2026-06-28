@@ -93,4 +93,38 @@ export class PublicacionesService {
     post.likes = post.likes.filter((item) => item !== usuarioId);
     return post.save();
   }
+
+  async obtenerPorId(id: string): Promise<Publicacion> {
+    const post = await this.publicacionModel.findOne({ _id: id, activo: true }).exec();
+    if (!post) throw new NotFoundException('Publicación no encontrada');
+    return post;
+  }
+
+  async comentar(idPublicacion: string, comentarioData: { autorId: string; autorNombre: string; autorUsuario: string; autorImagen?: string; texto: string }) {
+    const post = await this.publicacionModel.findById(idPublicacion);
+    if (!post || !post.activo) throw new NotFoundException('Publicación no disponible');
+
+    const nuevoComentario = {
+      _id: new (require('mongoose').Types.ObjectId)(), 
+      ...comentarioData,
+      createdAt: new Date() 
+    };
+
+    post.comentarios.push(nuevoComentario as any);
+    return post.save();
+  }
+
+  async editar(id: string, usuarioId: string, nuevoTexto: string) {
+    const post = await this.publicacionModel.findById(id);
+    if (!post) throw new NotFoundException('Publicación no encontrada');
+
+    if (post.autorId !== usuarioId) {
+      throw new ForbiddenException('No tienes permisos para editar esta publicación');
+    }
+
+    post.descripcion = nuevoTexto;
+    (post as any).modificado = true; 
+
+    return post.save();
+  }
 }
