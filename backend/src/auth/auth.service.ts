@@ -53,7 +53,7 @@ export class AuthService {
   }
 
   async login(loginDto: LoginDto) {
-    const usuario = await this.usuariosService.buscarParaLogin(loginDto.loginInput);
+    const usuario: any = await this.usuariosService.buscarParaLogin(loginDto.loginInput);
     if (!usuario) {
       throw new UnauthorizedException('Credenciales inválidas (usuario no encontrado).');
     }
@@ -61,6 +61,10 @@ export class AuthService {
     const contrasenaValida = await bcrypt.compare(loginDto.contrasena, usuario.contrasena);
     if (!contrasenaValida) {
       throw new UnauthorizedException('Credenciales inválidas (contraseña incorrecta).');
+    }
+
+    if (usuario.activo === false) {
+      throw new UnauthorizedException('Acceso denegado: Tu cuenta fue deshabilitada por un administrador.');
     }
 
     const usuarioLimpio = usuario.toObject();

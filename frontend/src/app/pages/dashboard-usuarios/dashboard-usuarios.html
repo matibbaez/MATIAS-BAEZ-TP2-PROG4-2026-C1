@@ -1,0 +1,180 @@
+<app-navbar />
+
+<div class="min-h-[100dvh] bg-gray-950 pt-24 pb-20 px-4 md:px-8 text-gray-100 selection:bg-blue-500 selection:text-white">
+  <div class="max-w-6xl mx-auto space-y-6">
+
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gray-900/60 border border-gray-800 p-6 rounded-3xl backdrop-blur-md">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-950/80 border border-blue-800/50 text-blue-400 text-[10px] font-mono mb-2">
+          <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
+          <span>ADMINISTRACIÓN VIP</span>
+        </div>
+        <h1 class="text-2xl font-black text-white tracking-tight">Gestión de Usuarios</h1>
+        <p class="text-xs text-gray-400 mt-1">Administrá el control de altas, bajas lógicas y privilegios de la plataforma.</p>
+      </div>
+
+      <button (click)="abrirModal()" class="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-black text-xs px-5 py-3 rounded-2xl shadow-lg shadow-blue-600/20 transition-all active:scale-95 cursor-pointer shrink-0">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+        <span>Crear nuevo usuario</span>
+      </button>
+    </div>
+
+    @if (mensajeAlerta) {
+      <div class="p-4 bg-gray-900 border border-blue-500/50 rounded-2xl text-xs font-bold text-blue-300 flex items-center gap-3 animate-fade-in shadow-xl">
+        <span>ℹ️ {{ mensajeAlerta }}</span>
+      </div>
+    }
+
+    <div class="bg-gray-900 border border-gray-800 rounded-3xl overflow-hidden shadow-2xl">
+      
+      @if (cargando) {
+        <div class="py-20 text-center space-y-3">
+          <div class="w-8 h-8 border-2 border-blue-500/20 border-t-blue-500 rounded-full animate-spin mx-auto"></div>
+          <p class="text-xs font-mono text-gray-500 uppercase">Consultando padrón en MongoDB...</p>
+        </div>
+      } @else {
+        
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            
+            <thead>
+              <tr class="border-b border-gray-800 bg-gray-950/50 text-gray-400 font-mono text-[10px] uppercase">
+                <th class="py-4 px-6">Usuario</th>
+                <th class="py-4 px-6">Correo</th>
+                <th class="py-4 px-6">Rol / Perfil</th>
+                <th class="py-4 px-6">Estado</th>
+                <th class="py-4 px-6 text-right">Acción</th>
+              </tr>
+            </thead>
+
+            <tbody class="divide-y divide-gray-800/60 font-normal text-gray-300">
+              @for (user of listaUsuarios; track user._id) {
+                <tr class="hover:bg-gray-800/30 transition-colors">
+                  
+                  <td class="py-4 px-6">
+                    <div class="flex items-center gap-3">
+                      <img [src]="user.imagenPerfil" class="w-9 h-9 rounded-full object-cover border border-gray-700">
+                      <div>
+                        <span class="font-black text-white block">{{ user.nombre }} {{ user.apellido }}</span>
+                        <span class="text-gray-500 font-mono">@{{ user.nombreUsuario }}</span>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td class="py-4 px-6 font-mono text-gray-400">{{ user.correo }}</td>
+
+                  <td class="py-4 px-6">
+                    <span class="px-2.5 py-1 rounded-lg text-[10px] font-black tracking-wider uppercase border"
+                          [ngClass]="user.perfil === 'administrador' ? 'bg-amber-950/40 text-amber-400 border-amber-800/60' : 'bg-gray-800 text-gray-400 border-gray-700'">
+                      {{ user.perfil }}
+                    </span>
+                  </td>
+
+                  <td class="py-4 px-6">
+                    <span class="inline-flex items-center gap-1.5 font-bold"
+                          [ngClass]="user.activo !== false ? 'text-emerald-400' : 'text-red-400'">
+                      <span class="w-2 h-2 rounded-full" [ngClass]="user.activo !== false ? 'bg-emerald-400 animate-pulse' : 'bg-red-500'"></span>
+                      <span>{{ user.activo !== false ? 'Habilitado' : 'Suspendido' }}</span>
+                    </span>
+                  </td>
+
+                  <td class="py-4 px-6 text-right">
+                    @if (user.perfil !== 'administrador') {
+                      <button (click)="alternarEstadoUsuario(user)"
+                              class="px-3.5 py-1.5 rounded-xl font-bold text-xs border transition-all active:scale-95 cursor-pointer shadow-sm"
+                              [ngClass]="user.activo !== false ? 'bg-red-950/30 hover:bg-red-900 text-red-400 border-red-800/50' : 'bg-emerald-950/30 hover:bg-emerald-900 text-emerald-400 border-emerald-800/50'">
+                        {{ user.activo !== false ? 'Deshabilitar' : 'Rehabilitar' }}
+                      </button>
+                    } @else {
+                      <span class="text-gray-600 italic text-[11px]">Intocable</span>
+                    }
+                  </td>
+
+                </tr>
+              }
+            </tbody>
+
+          </table>
+        </div>
+
+      }
+
+    </div>
+
+  </div>
+</div>
+
+@if (mostrarModalCrear) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs animate-fade-in text-left">
+    <div class="bg-gray-900 border border-gray-800 rounded-[2.5rem] p-6 md:p-8 max-w-lg w-full shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto">
+      
+      <div class="flex justify-between items-center border-b border-gray-800 pb-4">
+        <h3 class="text-lg font-black text-white">Alta manual de usuario</h3>
+        <button (click)="cerrarModal()" class="text-gray-500 hover:text-white p-1 rounded-lg">✕</button>
+      </div>
+
+      @if (errorCrear) {
+        <div class="p-3 bg-red-950/50 border border-red-800 text-red-300 text-xs rounded-xl font-bold">{{ errorCrear }}</div>
+      }
+
+      <div class="grid grid-cols-2 gap-3 text-xs">
+        <div>
+          <label class="text-gray-400 block mb-1">Nombre</label>
+          <input [(ngModel)]="nuevoUser.nombre" type="text" class="w-full bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-blue-500">
+        </div>
+        <div>
+          <label class="text-gray-400 block mb-1">Apellido</label>
+          <input [(ngModel)]="nuevoUser.apellido" type="text" class="w-full bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-blue-500">
+        </div>
+      </div>
+
+      <div class="text-xs">
+        <label class="text-gray-400 block mb-1">Correo electrónico</label>
+        <input [(ngModel)]="nuevoUser.correo" type="email" class="w-full bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-blue-500">
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 text-xs">
+        <div>
+          <label class="text-gray-400 block mb-1">Nombre de usuario</label>
+          <input [(ngModel)]="nuevoUser.nombreUsuario" type="text" placeholder="sin arroba" class="w-full bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-blue-500">
+        </div>
+        <div>
+          <label class="text-gray-400 block mb-1">Contraseña temporal</label>
+          <input [(ngModel)]="nuevoUser.contrasena" type="password" class="w-full bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-blue-500">
+        </div>
+      </div>
+
+      <div class="text-xs">
+        <label class="text-gray-400 block mb-1">Fecha de nacimiento</label>
+        <input [(ngModel)]="nuevoUser.fechaNacimiento" type="date" class="w-full bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-blue-500">
+      </div>
+
+      <div class="pt-2 border-t border-gray-800/80">
+        <label class="text-xs font-black text-blue-400 block mb-2 uppercase tracking-wide">Privilegios de la cuenta:</label>
+        <div class="flex gap-4">
+          
+          <label class="flex-1 flex items-center gap-2.5 bg-gray-950 border p-3 rounded-xl cursor-pointer transition-all"
+                 [ngClass]="nuevoUser.perfil === 'usuario' ? 'border-blue-500 bg-blue-950/20' : 'border-gray-800'">
+            <input type="radio" [(ngModel)]="nuevoUser.perfil" name="perfil" value="usuario" class="accent-blue-500">
+            <span class="text-xs font-bold text-gray-200">Usuario estándar</span>
+          </label>
+
+          <label class="flex-1 flex items-center gap-2.5 bg-gray-950 border p-3 rounded-xl cursor-pointer transition-all"
+                 [ngClass]="nuevoUser.perfil === 'administrador' ? 'border-amber-500 bg-amber-950/20' : 'border-gray-800'">
+            <input type="radio" [(ngModel)]="nuevoUser.perfil" name="perfil" value="administrador" class="accent-amber-500">
+            <span class="text-xs font-bold text-amber-400">Administrador</span>
+          </label>
+
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-3 pt-4 border-t border-gray-800">
+        <button (click)="cerrarModal()" class="px-5 py-2.5 text-xs font-bold text-gray-400 hover:bg-gray-800 rounded-xl">Cancelar</button>
+        <button (click)="registrarUsuarioAdmin()" [disabled]="creando" class="px-6 py-2.5 text-xs font-black bg-blue-600 hover:bg-blue-500 disabled:opacity-30 text-white rounded-xl shadow-lg cursor-pointer">
+          {{ creando ? 'Registrando...' : 'Confirmar alta' }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+}

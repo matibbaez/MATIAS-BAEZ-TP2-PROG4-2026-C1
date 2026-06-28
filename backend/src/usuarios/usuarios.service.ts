@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Usuario, UsuarioDocument } from './schemas/usuario.schema';
@@ -30,5 +30,25 @@ export class UsuariosService {
         { nombreUsuario: cleanInput }
       ]
     }).exec();
+  }
+
+  async obtenerTodosLosUsuarios(): Promise<any[]> {
+    return this.usuarioModel.find().select('-contrasena').sort({ createdAt: -1 }).exec();
+  }
+
+  async deshabilitarUsuario(id: string) {
+    const user = await this.usuarioModel.findById(id);
+    if (!user) throw new NotFoundException('Usuario no encontrado en la base de datos');
+
+    user.activo = false; 
+    return user.save();
+  }
+
+  async rehabilitarUsuario(id: string) {
+    const user = await this.usuarioModel.findById(id);
+    if (!user) throw new NotFoundException('Usuario no encontrado en la base de datos');
+
+    user.activo = true; 
+    return user.save();
   }
 }

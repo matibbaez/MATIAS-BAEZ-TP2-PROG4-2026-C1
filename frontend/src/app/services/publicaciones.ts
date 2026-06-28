@@ -8,8 +8,8 @@ import { Observable } from 'rxjs';
 export class PublicacionesService {
   private http = inject(HttpClient);
   
-  // private baseUrl = 'http://localhost:3000/publicaciones';
-  private baseUrl = 'https://matias-baez-tp2-prog4-2026-c1.onrender.com/publicaciones'; 
+  private baseUrl = 'http://localhost:3000/publicaciones';
+  // private baseUrl = 'https://matias-baez-tp2-prog4-2026-c1.onrender.com/publicaciones'; 
 
   obtenerFeed(orden: string = 'fecha', limit: number = 5, offset: number = 0, usuario?: string): Observable<any[]> {
     let params = new HttpParams()
