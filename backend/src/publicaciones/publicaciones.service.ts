@@ -127,4 +127,57 @@ export class PublicacionesService {
 
     return post.save();
   }
+
+  async estadisticasPublicacionesPorUsuario(inicio?: string, fin?: string) {
+    const match: any = { activo: true };
+    if (inicio && fin) {
+      match.createdAt = { $gte: new Date(inicio), $lte: new Date(fin) };
+    }
+
+    return this.publicacionModel.aggregate([
+      { $match: match },
+      { $group: { _id: '$autorUsuario', cantidad: { $sum: 1 } } },
+      { $sort: { cantidad: -1 } }
+    ]).exec();
+  }
+
+  async estadisticasComentariosEnElTiempo(inicio?: string, fin?: string) {
+    const match: any = { activo: true };
+    if (inicio && fin) {
+      match.createdAt = { $gte: new Date(inicio), $lte: new Date(fin) };
+    }
+
+    return this.publicacionModel.aggregate([
+      { $match: match },
+      { $unwind: '$comentarios' }, 
+      { 
+        $group: { 
+          _id: { $dateToString: { format: '%Y-%m-%d', date: '$comentarios.createdAt' } },
+          totalComentarios: { $sum: 1 }
+        } 
+      },
+      { $sort: { _id: 1 } } 
+    ]).exec();
+  }
+
+  async estadisticasComentariosPorPost(inicio?: string, fin?: string) {
+    const match: any = { activo: true };
+    if (inicio && fin) {
+      match.createdAt = { $gte: new Date(inicio), $lte: new Date(fin) };
+    }
+
+    return this.publicacionModel.aggregate([
+      { $match: match },
+      { 
+        $project: { 
+          titulo: 1, 
+          autorUsuario: 1,
+          cantidadComentarios: { $size: { $ifNull: ['$comentarios', []] } } 
+        } 
+      },
+      { $match: { cantidadComentarios: { $gt: 0 } } }, 
+      { $sort: { cantidadComentarios: -1 } },
+      { $limit: 10 } 
+    ]).exec();
+  }
 }

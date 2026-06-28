@@ -1,0 +1,92 @@
+<app-navbar />
+
+<div class="min-h-[100dvh] bg-gray-950 pt-24 pb-24 px-4 md:px-8 text-gray-100 selection:bg-blue-500 selection:text-white select-none">
+  <div class="max-w-6xl mx-auto space-y-8">
+
+    <div class="bg-gray-900/80 border border-gray-800 p-6 md:p-8 rounded-3xl backdrop-blur-md flex flex-col lg:flex-row lg:items-center justify-between gap-6 shadow-2xl">
+      
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-800/50 text-emerald-400 text-[10px] font-mono mb-2">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+          <span>SISTEMA DE BI & ANALYTICS</span>
+        </div>
+        <h1 class="text-2xl md:text-3xl font-black text-white tracking-tight">Métricas de Impacto</h1>
+        <p class="text-xs text-gray-400 mt-1">Monitoreo en tiempo real del comportamiento de la comunidad académica.</p>
+      </div>
+
+      <div class="flex flex-wrap items-end gap-3 bg-gray-950 p-3.5 rounded-2xl border border-gray-800 text-xs">
+        <div>
+          <label class="text-[10px] font-mono text-gray-500 block mb-1">DESDE</label>
+          <input type="date" [(ngModel)]="fechaInicio" class="bg-gray-900 border border-gray-800 text-blue-400 font-bold rounded-xl px-3 py-2 focus:outline-none focus:border-blue-500 cursor-pointer">
+        </div>
+
+        <div>
+          <label class="text-[10px] font-mono text-gray-500 block mb-1">HASTA</label>
+          <input type="date" [(ngModel)]="fechaFin" class="bg-gray-900 border border-gray-800 text-blue-400 font-bold rounded-xl px-3 py-2 focus:outline-none focus:border-blue-500 cursor-pointer">
+        </div>
+
+        <button (click)="consultarMetricas()" [disabled]="cargando"
+                class="bg-blue-600 hover:bg-blue-500 disabled:opacity-30 text-white font-black px-5 py-2 rounded-xl transition-all active:scale-95 cursor-pointer h-[34px] shadow-lg shadow-blue-600/20 flex items-center gap-1.5">
+          <span>🔄</span>
+          <span>{{ cargando ? 'Calculando...' : 'Filtrar' }}</span>
+        </button>
+      </div>
+
+    </div>
+
+    @if (error) {
+      <div class="p-6 bg-red-950/40 border border-red-800 rounded-3xl text-center text-red-300 font-bold text-sm">{{ error }}</div>
+    }
+
+    @if (cargando) {
+      <div class="py-28 text-center space-y-4">
+        <div class="w-10 h-10 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin mx-auto"></div>
+        <p class="text-xs font-mono text-gray-500 uppercase tracking-widest">Agregando colecciones en MongoDB...</p>
+      </div>
+    } @else {
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <div class="bg-gray-900 border border-gray-800 p-6 rounded-3xl shadow-xl flex flex-col justify-between">
+          <div class="mb-4">
+            <h3 class="text-sm font-black text-white uppercase tracking-wider">Productividad por Usuario</h3>
+            <p class="text-[11px] text-gray-400">Total de investigaciones publicadas en el feed principal.</p>
+          </div>
+          
+          <div class="relative h-72 w-full">
+            <canvas baseChart [data]="barChartData" [options]="darkOptions" [type]="'bar'"></canvas>
+          </div>
+        </div>
+
+        <div class="bg-gray-900 border border-gray-800 p-6 rounded-3xl shadow-xl flex flex-col justify-between">
+          <div class="mb-4">
+            <h3 class="text-sm font-black text-white uppercase tracking-wider">Publicaciones más debatidas</h3>
+            <p class="text-[11px] text-gray-400">Distribución porcentual de comentarios por documento.</p>
+          </div>
+          
+          <div class="relative h-72 w-full flex items-center justify-center">
+            @if (pieChartData.labels.length > 0) {
+              <canvas baseChart [data]="pieChartData" [options]="pieOptions" [type]="'doughnut'"></canvas>
+            } @else {
+              <p class="text-xs text-gray-600 italic">No hay publicaciones con comentarios en este lapso.</p>
+            }
+          </div>
+        </div>
+
+        <div class="bg-gray-900 border border-gray-800 p-6 rounded-3xl shadow-xl lg:col-span-2">
+          <div class="mb-4">
+            <h3 class="text-sm font-black text-white uppercase tracking-wider">Evolución temporal del debate</h3>
+            <p class="text-[11px] text-gray-400">Curva cronológica de comentarios generados día por día.</p>
+          </div>
+          
+          <div class="relative h-80 w-full">
+            <canvas baseChart [data]="lineChartData" [options]="darkOptions" [type]="'line'"></canvas>
+          </div>
+        </div>
+
+      </div>
+
+    }
+
+  </div>
+</div>

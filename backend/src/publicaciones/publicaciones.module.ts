@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PublicacionesService } from './publicaciones.service';
 import { PublicacionesController } from './publicaciones.controller';
+import { EstadisticasController } from './estadisticas.controller'; 
 import { Publicacion, PublicacionSchema } from './schemas/publicacion.schema';
 import { CloudinaryModule } from '../cloudinary/cloudinary.module';
 
@@ -10,7 +11,7 @@ import { CloudinaryModule } from '../cloudinary/cloudinary.module';
     MongooseModule.forFeature([{ name: Publicacion.name, schema: PublicacionSchema }]),
     CloudinaryModule, 
   ],
-  controllers: [PublicacionesController],
+  controllers: [PublicacionesController, EstadisticasController], 
   providers: [PublicacionesService],
 })
 export class PublicacionesModule {}

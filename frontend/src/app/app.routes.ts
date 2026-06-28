@@ -4,8 +4,9 @@ import { RegistroComponent } from './pages/registro/registro';
 import { PublicacionesComponent } from './pages/publicaciones/publicaciones';
 import { MiPerfilComponent } from './pages/mi-perfil/mi-perfil';
 import { DetallePublicacionComponent } from './pages/detalle-publicacion/detalle-publicacion'; 
-import { DashboardUsuariosComponent } from './pages/dashboard-usuarios/dashboard-usuarios'; // <-- NUEVO IMPORT
-import { authGuard, noAuthGuard, adminGuard } from './guards/auth'; // <-- AGREGAMOS adminGuard
+import { DashboardUsuariosComponent } from './pages/dashboard-usuarios/dashboard-usuarios'; 
+import { DashboardEstadisticasComponent } from './pages/dashboard-estadisticas/dashboard-estadisticas'; 
+import { authGuard, noAuthGuard, adminGuard } from './guards/auth';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -18,6 +19,7 @@ export const routes: Routes = [
   { path: 'publicacion/:id', component: DetallePublicacionComponent, canActivate: [authGuard] },
 
   { path: 'dashboard/usuarios', component: DashboardUsuariosComponent, canActivate: [authGuard, adminGuard] },
+  { path: 'dashboard/estadisticas', component: DashboardEstadisticasComponent, canActivate: [authGuard, adminGuard] },
 
   { path: '**', redirectTo: '/login' } 
 ];
