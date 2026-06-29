@@ -54,13 +54,16 @@ export class AuthService {
 
   async login(loginDto: LoginDto) {
     const usuario: any = await this.usuariosService.buscarParaLogin(loginDto.loginInput);
+    
+    const errorGenerico = 'Credenciales inválidas (usuario o contraseña incorrectos).';
+
     if (!usuario) {
-      throw new UnauthorizedException('Credenciales inválidas (usuario no encontrado).');
+      throw new UnauthorizedException(errorGenerico);
     }
 
     const contrasenaValida = await bcrypt.compare(loginDto.contrasena, usuario.contrasena);
     if (!contrasenaValida) {
-      throw new UnauthorizedException('Credenciales inválidas (contraseña incorrecta).');
+      throw new UnauthorizedException(errorGenerico);
     }
 
     if (usuario.activo === false) {

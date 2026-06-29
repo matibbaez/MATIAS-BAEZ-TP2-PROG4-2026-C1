@@ -6,10 +6,28 @@ import { PublicacionCardComponent } from '../../components/publicacion-card/publ
 import { PublicacionesService } from '../../services/publicaciones';
 import { AuthService } from '../../services/auth';
 
+import { RecortarPipe } from '../../pipes/recortar-pipe';
+import { HashtagPipe } from '../../pipes/hashtag-pipe';
+import { CensurarPipe } from '../../pipes/censurar-pipe';
+import { ResaltarHoverDirective } from '../../directivas/resaltar-hover';
+import { ImagenFallidaDirective } from '../../directivas/imagen-fallida';
+import { AutoFocoDirective } from '../../directivas/auto-foco';
+
 @Component({
   selector: 'app-publicaciones',
   standalone: true,
-  imports: [CommonModule, FormsModule, NavbarComponent, PublicacionCardComponent],
+  imports: [
+    CommonModule, 
+    FormsModule, 
+    NavbarComponent, 
+    PublicacionCardComponent,
+    RecortarPipe,
+    HashtagPipe,
+    CensurarPipe,
+    ResaltarHoverDirective,
+    ImagenFallidaDirective,
+    AutoFocoDirective
+  ],
   templateUrl: './publicaciones.html'
 })
 export class PublicacionesComponent implements OnInit {

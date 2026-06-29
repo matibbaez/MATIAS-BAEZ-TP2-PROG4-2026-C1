@@ -33,4 +33,10 @@ export class UsuariosService {
   rehabilitar(id: string): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/${id}/rehabilitar`, {}, { headers: this.obtenerHeaders() });
   }
+  
+  actualizarAvatar(id: string, archivo: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', archivo);
+    return this.http.patch<any>(`${this.baseUrl}/${id}/avatar`, formData, { headers: this.obtenerHeaders() });
+  }
 }

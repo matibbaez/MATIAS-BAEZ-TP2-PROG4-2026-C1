@@ -1,12 +1,13 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router, RouterLinkActive } from '@angular/router';
+import { ImagenFallidaDirective } from '../../directivas/imagen-fallida';
 import { AuthService } from '../../services/auth';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive],
+  imports: [CommonModule, RouterLink, RouterLinkActive, ImagenFallidaDirective],
   templateUrl: './navbar.html'
 })
 export class NavbarComponent {

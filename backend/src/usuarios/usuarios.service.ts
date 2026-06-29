@@ -51,4 +51,12 @@ export class UsuariosService {
     user.activo = true; 
     return user.save();
   }
+
+  async actualizarFotoPerfil(id: string, nuevaUrl: string) {
+    const user = await this.usuarioModel.findById(id);
+    if (!user) throw new NotFoundException('Usuario no encontrado en la base de datos');
+
+    user.imagenPerfil = nuevaUrl;
+    return user.save();
+  }
 }

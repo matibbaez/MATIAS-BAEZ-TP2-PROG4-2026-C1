@@ -14,15 +14,17 @@
       <div class="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-600/30 via-blue-500/50 to-blue-600/30"></div>
       
       <div class="flex gap-3.5 mb-3">
-        <img *ngIf="usuarioLogueado" [src]="usuarioLogueado.imagenPerfil || 'https://api.dicebear.com/7.x/initials/svg?seed=' + usuarioLogueado.nombre" 
+        <img *ngIf="usuarioLogueado" 
+             [src]="usuarioLogueado.imagenPerfil || 'https://api.dicebear.com/7.x/initials/svg?seed=' + usuarioLogueado.nombre"
+             appImagenFallida
              class="w-10 h-10 rounded-full object-cover border border-gray-800 shrink-0 shadow-inner">
         
         <div class="flex-1 min-w-0 space-y-2">
           
           <div>
-            <input type="text" [(ngModel)]="nuevoTitulo" maxlength="60" placeholder="Título de tu investigación..."
-                   class="w-full bg-transparent text-blue-400 font-black text-base focus:outline-none placeholder-blue-950 border-b border-gray-800/80 pb-1"
-                   [disabled]="publicando">
+            <input type="text" appAutoFoco [(ngModel)]="nuevoTitulo" maxlength="60" placeholder="Título de tu investigación..."
+                  class="w-full bg-transparent text-blue-400 font-black text-base focus:outline-none placeholder-blue-950 border-b border-gray-800/80 pb-1"
+                  [disabled]="publicando">
             <div class="text-[10px] text-gray-500 font-mono text-right mt-0.5 font-bold">
               <span>{{ nuevoTitulo?.length || 0 }} / 60</span>
             </div>
@@ -43,7 +45,7 @@
 
       <div *ngIf="previewUrl" class="mb-3 relative rounded-2xl overflow-hidden border border-gray-800 bg-black/50 max-h-48 flex items-center justify-center">
         <img [src]="previewUrl" class="max-h-48 w-full object-cover">
-        <button (click)="previewUrl = null; archivoSeleccionado = null" title="Quitar imagen adjunta" 
+        <button (click)="previewUrl = null; archivoSeleccionado = null" title="Quitar imagen adjunta"
                 class="absolute top-2 right-2 bg-gray-900/80 text-gray-300 hover:text-white p-1.5 rounded-full hover:bg-red-600/80 transition-all cursor-pointer">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -59,7 +61,7 @@
           <input type="file" (change)="seleccionarImagen($event)" accept="image/*" class="hidden">
         </label>
 
-        <button (click)="realizarPosteo()" 
+        <button (click)="realizarPosteo()"
                 [disabled]="publicando || !nuevoTitulo.trim() || !nuevaDescripcion.trim()"
                 class="bg-blue-600 hover:bg-blue-500 disabled:opacity-30 text-white text-xs font-black px-5 py-2 rounded-xl transition-all cursor-pointer shadow-lg shadow-blue-600/20 flex items-center gap-1.5">
           <span>{{ publicando ? 'Guardando...' : 'Publicar' }}</span>
@@ -82,7 +84,7 @@
       </div>
 
       <div class="flex items-center gap-1.5">
-        <button (click)="paginaAnterior()" [disabled]="paginaActual === 0 || cargandoFeed" 
+        <button (click)="paginaAnterior()" [disabled]="paginaActual === 0 || cargandoFeed"
                 class="flex items-center gap-1 px-3 py-1.5 bg-gray-950 hover:bg-gray-800 disabled:opacity-30 text-gray-300 rounded-xl border border-gray-800 font-bold transition-all cursor-pointer">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/>
@@ -92,7 +94,7 @@
         
         <span class="text-gray-400 font-mono font-bold px-1.5">Pág. {{ paginaActual + 1 }}</span>
         
-        <button (click)="paginaSiguiente()" [disabled]="feed.length < limit || cargandoFeed" 
+        <button (click)="paginaSiguiente()" [disabled]="feed.length < limit || cargandoFeed"
                 class="flex items-center gap-1 px-3 py-1.5 bg-gray-950 hover:bg-gray-800 disabled:opacity-30 text-gray-300 rounded-xl border border-gray-800 font-bold transition-all cursor-pointer">
           <span>Siguiente</span>
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -115,8 +117,8 @@
         <p class="text-xs text-gray-500 mt-1">La base de datos no devolvió documentos para esta página.</p>
       </div>
 
-      <div *ngFor="let post of feed">
-        <app-publicacion-card 
+      <div *ngFor="let post of feed" appResaltarHover class="rounded-3xl transition-all">
+        <app-publicacion-card
           [post]="post"
           [miUsuarioId]="usuarioLogueado?._id || ''"
           [miRol]="usuarioLogueado?.perfil || 'usuario'"

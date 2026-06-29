@@ -1,11 +1,14 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { RecortarPipe } from '../../pipes/recortar-pipe';
+import { HashtagPipe } from '../../pipes/hashtag-pipe';
+import { CensurarPipe } from '../../pipes/censurar-pipe';
 
 @Component({
   selector: 'app-publicacion-card',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, RecortarPipe, HashtagPipe, CensurarPipe],
   templateUrl: './publicacion-card.html'
 })
 export class PublicacionCardComponent {

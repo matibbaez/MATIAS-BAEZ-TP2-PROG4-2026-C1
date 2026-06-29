@@ -1,19 +1,25 @@
-import { Controller, Get, Post, Delete, Body, Param, UseGuards, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Patch, Body, Param, UseGuards, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { UsuariosService } from './usuarios.service';
 import { AdminGuard } from '../auth/guards/admin.guard';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import * as bcrypt from 'bcrypt';
 
 @Controller('usuarios')
-@UseGuards(AdminGuard) 
 export class UsuariosController {
-  constructor(private readonly usuariosService: UsuariosService) {}
+  constructor(
+    private readonly usuariosService: UsuariosService,
+    private readonly cloudinaryService: CloudinaryService
+  ) {}
 
   @Get()
+  @UseGuards(AdminGuard) 
   async listarTodos() {
     return this.usuariosService.obtenerTodosLosUsuarios();
   }
 
   @Post()
+  @UseGuards(AdminGuard)
   async crearUsuarioAdmin(@Body() body: any) {
     if (!body.correo || !body.nombreUsuario || !body.contrasena || !body.perfil) {
       throw new BadRequestException('Faltan campos obligatorios para crear el usuario.');
@@ -40,12 +46,27 @@ export class UsuariosController {
   }
 
   @Delete(':id')
+  @UseGuards(AdminGuard) 
   async darDeBaja(@Param('id') id: string) {
     return this.usuariosService.deshabilitarUsuario(id);
   }
 
   @Post(':id/rehabilitar')
+  @UseGuards(AdminGuard) 
   async darDeAlta(@Param('id') id: string) {
     return this.usuariosService.rehabilitarUsuario(id);
+  }
+
+  @Patch(':id/avatar')
+  @UseInterceptors(FileInterceptor('file'))
+  async cambiarAvatar(@Param('id') id: string, @UploadedFile() file?: Express.Multer.File) {
+    if (!file) throw new BadRequestException('No se adjuntó ninguna imagen');
+
+    const res = await this.cloudinaryService.subirImagen(file);
+    const userActualizado = await this.usuariosService.actualizarFotoPerfil(id, res.secure_url);
+
+    const userObj = userActualizado.toObject();
+    delete (userObj as any).contrasena;
+    return userObj;
   }
 }
