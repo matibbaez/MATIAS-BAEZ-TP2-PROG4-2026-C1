@@ -127,4 +127,31 @@ export class PublicacionesService {
 
     return post.save();
   }
+
+  async modificarComentario(idPost: string, idComentario: string, idUsuario: string, nuevoTexto: string) {
+    const publicacion = await this.publicacionModel.findById(idPost);
+    
+    if (!publicacion) {
+      throw new NotFoundException('La publicación no existe.');
+    }
+
+    const comentario = publicacion.comentarios.find(
+      (c: any) => c._id.toString() === idComentario.toString()
+    );
+
+    if (!comentario) {
+      throw new NotFoundException('El comentario no fue encontrado en la base de datos.');
+    }
+
+    if (comentario.autorId.toString() !== idUsuario.toString()) {
+      throw new NotFoundException('No se pudo editar: No tenés permisos para modificar este comentario.');
+    }
+
+    comentario.texto = nuevoTexto;
+    comentario.modificado = true;
+
+    publicacion.markModified('comentarios');
+    
+    return await publicacion.save();
+  }
 }

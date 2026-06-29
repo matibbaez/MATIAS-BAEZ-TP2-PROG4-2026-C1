@@ -53,4 +53,11 @@ export class PublicacionesService {
   editarPublicacion(id: string, usuarioId: string, descripcion: string): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/${id}/editar`, { usuarioId, descripcion });
   }
+
+  editarComentario(postId: string, comentarioId: string, texto: string, usuarioId: string) {
+    return this.http.put<any>(
+      `${this.baseUrl}/${postId}/comentarios/${comentarioId}`, 
+      { texto, usuarioId }
+    );
+  }
 }

@@ -21,13 +21,22 @@ export class DetallePublicacionComponent implements OnInit {
   usuarioLogueado: any = null;
   cargando = true;
   error = '';
+  
+  // Variables de Comentarios
   errorComentario = '';
   limiteComentarios = 5; 
   textoComentario = '';
   enviandoComentario = false;
+  
+  // Variables Edición Post
   modoEdicion = false;
   textoEdicion = '';
   guardandoEdicion = false;
+
+  // Variables Edición Comentarios (NUEVO SPRINT 3)
+  comentarioEditandoId: string | null = null;
+  textoEdicionComentario = '';
+  guardandoEdicionComentario = false;
 
   ngOnInit() {
     this.usuarioLogueado = this.authService.obtenerUsuarioActual();
@@ -126,6 +135,38 @@ export class DetallePublicacionComponent implements OnInit {
         this.guardandoEdicion = false;
       },
       error: () => this.guardandoEdicion = false
+    });
+  }
+
+  iniciarEdicionComentario(comentario: any) {
+    this.comentarioEditandoId = comentario._id;
+    this.textoEdicionComentario = comentario.texto;
+  }
+
+  cancelarEdicionComentario() {
+    this.comentarioEditandoId = null;
+    this.textoEdicionComentario = '';
+  }
+
+  guardarEdicionComentario(comentarioId: string) {
+    if (!this.textoEdicionComentario.trim() || !this.post) return;
+
+    this.guardandoEdicionComentario = true;
+    
+    this.pubService.editarComentario(this.post._id, comentarioId, this.textoEdicionComentario.trim(), this.usuarioLogueado._id).subscribe({
+      next: () => {
+        const com = this.post.comentarios.find((c: any) => c._id === comentarioId);
+        if (com) {
+          com.texto = this.textoEdicionComentario.trim();
+          com.modificado = true;
+        }
+        this.cancelarEdicionComentario();
+        this.guardandoEdicionComentario = false;
+      },
+      error: (err) => {
+        console.error('Error al editar comentario:', err);
+        this.guardandoEdicionComentario = false;
+      }
     });
   }
 }
