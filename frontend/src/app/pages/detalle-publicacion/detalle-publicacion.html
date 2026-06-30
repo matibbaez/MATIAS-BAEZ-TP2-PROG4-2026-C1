@@ -25,6 +25,7 @@
       <div class="flex items-center justify-between mb-6 pb-6 border-b border-gray-800/80">
         <div class="flex items-center gap-3.5">
           <img [src]="post.autorImagen || ('https://api.dicebear.com/7.x/initials/svg?seed=' + post.autorNombre)" 
+               appImagenFallida
                class="w-12 h-12 rounded-full object-cover border border-gray-700 shadow-inner shrink-0">
           <div>
             <h2 class="text-base font-black text-white leading-snug">{{ post.autorNombre }}</h2>
@@ -67,7 +68,7 @@
 
       @if (post.imagenUrl) {
         <div class="mb-8 rounded-3xl overflow-hidden border border-gray-800 bg-black max-h-[500px] flex items-center justify-center shadow-2xl">
-          <img [src]="post.imagenUrl" class="max-h-[500px] w-full object-contain">
+          <img [src]="post.imagenUrl" appImagenFallida class="max-h-[500px] w-full object-contain">
         </div>
       }
 
@@ -83,6 +84,7 @@
           
           <div class="flex gap-3">
             <img [src]="usuarioLogueado?.imagenPerfil || ('https://api.dicebear.com/7.x/initials/svg?seed=' + usuarioLogueado?.nombre)" 
+                 appImagenFallida
                  class="w-9 h-9 rounded-full object-cover shrink-0 border border-gray-800">
             
             <div class="flex-1 flex gap-2 items-end">

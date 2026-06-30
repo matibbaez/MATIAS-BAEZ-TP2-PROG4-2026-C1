@@ -5,11 +5,12 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { NavbarComponent } from '../../components/navbar/navbar';
 import { PublicacionesService } from '../../services/publicaciones';
 import { AuthService } from '../../services/auth';
+import { ImagenFallidaDirective } from '../../directivas/imagen-fallida'; 
 
 @Component({
   selector: 'app-detalle-publicacion',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, NavbarComponent],
+  imports: [CommonModule, FormsModule, RouterLink, NavbarComponent, ImagenFallidaDirective],
   templateUrl: './detalle-publicacion.html'
 })
 export class DetallePublicacionComponent implements OnInit {
@@ -22,18 +23,15 @@ export class DetallePublicacionComponent implements OnInit {
   cargando = true;
   error = '';
   
-  // Variables de Comentarios
   errorComentario = '';
   limiteComentarios = 5; 
   textoComentario = '';
   enviandoComentario = false;
   
-  // Variables Edición Post
   modoEdicion = false;
   textoEdicion = '';
   guardandoEdicion = false;
 
-  // Variables Edición Comentarios (NUEVO SPRINT 3)
   comentarioEditandoId: string | null = null;
   textoEdicionComentario = '';
   guardandoEdicionComentario = false;
