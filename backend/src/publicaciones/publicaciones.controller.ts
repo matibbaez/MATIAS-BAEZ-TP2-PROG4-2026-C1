@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Delete, Body, Param, Query, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { PublicacionesService } from './publicaciones.service';
 import { CloudinaryService } from '../cloudinary/cloudinary.service'; 
@@ -95,5 +95,18 @@ export class PublicacionesController {
   ) {
     if (!body.descripcion) throw new BadRequestException('La descripción no puede quedar vacía');
     return this.publicacionesService.editar(id, body.usuarioId, body.descripcion);
+  }
+
+  @Put(':id/comentarios/:idComentario')
+  async editarComentario(
+    @Param('id') idPost: string,
+    @Param('idComentario') idComentario: string,
+    @Body() body: { usuarioId: string; texto: string }
+  ) {
+    if (!body.texto || body.texto.trim().length === 0) {
+      throw new BadRequestException('El comentario no puede estar vacío');
+    }
+    
+    return this.publicacionesService.modificarComentario(idPost, idComentario, body.usuarioId, body.texto);
   }
 }
