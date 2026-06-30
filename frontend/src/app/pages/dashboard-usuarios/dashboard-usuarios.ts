@@ -79,10 +79,67 @@ export class DashboardUsuariosComponent implements OnInit {
   }
 
   registrarUsuarioAdmin() {
-    if (!this.nuevoUser.correo || !this.nuevoUser.nombreUsuario || !this.nuevoUser.contrasena) {
-      this.errorCrear = 'Por favor completá los campos obligatorios.';
+    // 1. Limpiamos los espacios en blanco de los extremos para que no nos caguen con "   "
+    const nombre = this.nuevoUser.nombre?.trim() || '';
+    const apellido = this.nuevoUser.apellido?.trim() || '';
+    const correo = this.nuevoUser.correo?.trim() || '';
+    const nombreUsuario = this.nuevoUser.nombreUsuario?.trim() || '';
+    const contrasena = this.nuevoUser.contrasena?.trim() || '';
+    const fechaNacimiento = this.nuevoUser.fechaNacimiento;
+
+    // 2. Validación de campos vacíos
+    if (!nombre || !apellido || !correo || !nombreUsuario || !contrasena || !fechaNacimiento) {
+      this.errorCrear = 'Todos los campos son obligatorios y no pueden ser solo espacios.';
       return;
     }
+
+    // 3. Validación de longitud
+    if (nombre.length < 2 || apellido.length < 2 || nombreUsuario.length < 2) {
+      this.errorCrear = 'El nombre, apellido y usuario deben tener al menos 2 caracteres.';
+      return;
+    }
+
+    // 4. Validación de Correo (Regex)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(correo)) {
+      this.errorCrear = 'El formato del correo electrónico no es válido.';
+      return;
+    }
+
+    // 5. Validación de Contraseña (Mínimo 8, 1 mayúscula, 1 minúscula, 1 número)
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+    if (!passwordRegex.test(contrasena)) {
+      this.errorCrear = 'La contraseña debe tener al menos 8 caracteres, 1 mayúscula, 1 minúscula y 1 número.';
+      return;
+    }
+
+    // 6. Validación de Edad y Fechas
+    const fechaNacDate = new Date(fechaNacimiento);
+    const hoy = new Date();
+
+    if (fechaNacDate > hoy) {
+      this.errorCrear = 'La fecha de nacimiento no puede ser en el futuro.';
+      return;
+    }
+
+    let edad = hoy.getFullYear() - fechaNacDate.getFullYear();
+    const mes = hoy.getMonth() - fechaNacDate.getMonth();
+    
+    // Si todavía no llegó su mes de cumpleaños, o es el mes pero no llegó el día, le restamos 1
+    if (mes < 0 || (mes === 0 && hoy.getDate() < fechaNacDate.getDate())) {
+      edad--;
+    }
+
+    if (edad < 16) {
+      this.errorCrear = 'El usuario debe ser mayor de 16 años para ser registrado.';
+      return;
+    }
+
+    this.nuevoUser.nombre = nombre;
+    this.nuevoUser.apellido = apellido;
+    this.nuevoUser.correo = correo;
+    this.nuevoUser.nombreUsuario = nombreUsuario;
+    this.nuevoUser.contrasena = contrasena;
 
     this.creando = true;
     this.errorCrear = '';
