@@ -110,7 +110,7 @@
       
       <div class="flex justify-between items-center border-b border-gray-800 pb-4">
         <h3 class="text-lg font-black text-white">Alta manual de usuario</h3>
-        <button (click)="cerrarModal()" class="text-gray-500 hover:text-white p-1 rounded-lg">✕</button>
+        <button (click)="cerrarModal()" class="text-gray-500 hover:text-white p-1 rounded-lg cursor-pointer">✕</button>
       </div>
 
       @if (errorCrear) {
@@ -120,33 +120,51 @@
       <div class="grid grid-cols-2 gap-3 text-xs">
         <div>
           <label class="text-gray-400 block mb-1">Nombre</label>
-          <input [(ngModel)]="nuevoUser.nombre" type="text" class="w-full bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-blue-500">
+          <input [(ngModel)]="nuevoUser.nombre" (ngModelChange)="validarEnTiempoReal()" type="text" 
+                 class="w-full bg-gray-950 border rounded-xl p-2.5 text-white focus:outline-none transition-colors"
+                 [ngClass]="erroresTiempoReal.nombre ? 'border-red-500/50 focus:border-red-500' : 'border-gray-800 focus:border-blue-500'">
+          @if (erroresTiempoReal.nombre) { <span class="text-[10px] text-red-400 font-bold mt-1 block">{{ erroresTiempoReal.nombre }}</span> }
         </div>
         <div>
           <label class="text-gray-400 block mb-1">Apellido</label>
-          <input [(ngModel)]="nuevoUser.apellido" type="text" class="w-full bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-blue-500">
+          <input [(ngModel)]="nuevoUser.apellido" (ngModelChange)="validarEnTiempoReal()" type="text" 
+                 class="w-full bg-gray-950 border rounded-xl p-2.5 text-white focus:outline-none transition-colors"
+                 [ngClass]="erroresTiempoReal.apellido ? 'border-red-500/50 focus:border-red-500' : 'border-gray-800 focus:border-blue-500'">
+          @if (erroresTiempoReal.apellido) { <span class="text-[10px] text-red-400 font-bold mt-1 block">{{ erroresTiempoReal.apellido }}</span> }
         </div>
       </div>
 
       <div class="text-xs">
         <label class="text-gray-400 block mb-1">Correo electrónico</label>
-        <input [(ngModel)]="nuevoUser.correo" type="email" class="w-full bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-blue-500">
+        <input [(ngModel)]="nuevoUser.correo" (ngModelChange)="validarEnTiempoReal()" type="email" 
+               class="w-full bg-gray-950 border rounded-xl p-2.5 text-white focus:outline-none transition-colors"
+               [ngClass]="erroresTiempoReal.correo ? 'border-red-500/50 focus:border-red-500' : 'border-gray-800 focus:border-blue-500'">
+        @if (erroresTiempoReal.correo) { <span class="text-[10px] text-red-400 font-bold mt-1 block">{{ erroresTiempoReal.correo }}</span> }
       </div>
 
       <div class="grid grid-cols-2 gap-3 text-xs">
         <div>
           <label class="text-gray-400 block mb-1">Nombre de usuario</label>
-          <input [(ngModel)]="nuevoUser.nombreUsuario" type="text" placeholder="sin arroba" class="w-full bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-blue-500">
+          <input [(ngModel)]="nuevoUser.nombreUsuario" (ngModelChange)="validarEnTiempoReal()" type="text" placeholder="sin arroba" 
+                 class="w-full bg-gray-950 border rounded-xl p-2.5 text-white focus:outline-none transition-colors"
+                 [ngClass]="erroresTiempoReal.nombreUsuario ? 'border-red-500/50 focus:border-red-500' : 'border-gray-800 focus:border-blue-500'">
+          @if (erroresTiempoReal.nombreUsuario) { <span class="text-[10px] text-red-400 font-bold mt-1 block">{{ erroresTiempoReal.nombreUsuario }}</span> }
         </div>
         <div>
           <label class="text-gray-400 block mb-1">Contraseña temporal</label>
-          <input [(ngModel)]="nuevoUser.contrasena" type="password" class="w-full bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-blue-500">
+          <input [(ngModel)]="nuevoUser.contrasena" (ngModelChange)="validarEnTiempoReal()" type="password" 
+                 class="w-full bg-gray-950 border rounded-xl p-2.5 text-white focus:outline-none transition-colors"
+                 [ngClass]="erroresTiempoReal.contrasena ? 'border-red-500/50 focus:border-red-500' : 'border-gray-800 focus:border-blue-500'">
+          @if (erroresTiempoReal.contrasena) { <span class="text-[10px] text-red-400 font-bold mt-1 block">{{ erroresTiempoReal.contrasena }}</span> }
         </div>
       </div>
 
       <div class="text-xs">
         <label class="text-gray-400 block mb-1">Fecha de nacimiento</label>
-        <input [(ngModel)]="nuevoUser.fechaNacimiento" type="date" class="w-full bg-gray-950 border border-gray-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-blue-500">
+        <input [(ngModel)]="nuevoUser.fechaNacimiento" (ngModelChange)="validarEnTiempoReal()" type="date" 
+               class="w-full bg-gray-950 border rounded-xl p-2.5 text-white focus:outline-none transition-colors"
+               [ngClass]="erroresTiempoReal.fechaNacimiento ? 'border-red-500/50 focus:border-red-500' : 'border-gray-800 focus:border-blue-500'">
+        @if (erroresTiempoReal.fechaNacimiento) { <span class="text-[10px] text-red-400 font-bold mt-1 block">{{ erroresTiempoReal.fechaNacimiento }}</span> }
       </div>
 
       <div class="pt-2 border-t border-gray-800/80">
@@ -169,8 +187,9 @@
       </div>
 
       <div class="flex justify-end gap-3 pt-4 border-t border-gray-800">
-        <button (click)="cerrarModal()" class="px-5 py-2.5 text-xs font-bold text-gray-400 hover:bg-gray-800 rounded-xl">Cancelar</button>
-        <button (click)="registrarUsuarioAdmin()" [disabled]="creando" class="px-6 py-2.5 text-xs font-black bg-blue-600 hover:bg-blue-500 disabled:opacity-30 text-white rounded-xl shadow-lg cursor-pointer">
+        <button (click)="cerrarModal()" class="px-5 py-2.5 text-xs font-bold text-gray-400 hover:bg-gray-800 rounded-xl cursor-pointer">Cancelar</button>
+        <button (click)="registrarUsuarioAdmin()" [disabled]="creando || !formularioValido" 
+                class="px-6 py-2.5 text-xs font-black bg-blue-600 hover:bg-blue-500 disabled:opacity-30 disabled:cursor-not-allowed text-white rounded-xl shadow-lg cursor-pointer transition-all">
           {{ creando ? 'Registrando...' : 'Confirmar alta' }}
         </button>
       </div>

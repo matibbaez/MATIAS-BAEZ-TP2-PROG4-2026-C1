@@ -31,6 +31,16 @@ export class DashboardUsuariosComponent implements OnInit {
     perfil: 'usuario' 
   };
 
+  formularioValido = false;
+  erroresTiempoReal = {
+    nombre: '',
+    apellido: '',
+    correo: '',
+    nombreUsuario: '',
+    contrasena: '',
+    fechaNacimiento: ''
+  };
+
   ngOnInit() {
     this.cargarLista();
   }
@@ -70,6 +80,7 @@ export class DashboardUsuariosComponent implements OnInit {
   }
 
   abrirModal() {
+    this.limpiarFormulario(); 
     this.mostrarModalCrear = true;
     this.errorCrear = '';
   }
@@ -78,71 +89,63 @@ export class DashboardUsuariosComponent implements OnInit {
     this.mostrarModalCrear = false;
   }
 
-  registrarUsuarioAdmin() {
-    // 1. Limpiamos los espacios en blanco de los extremos para que no nos caguen con "   "
-    const nombre = this.nuevoUser.nombre?.trim() || '';
-    const apellido = this.nuevoUser.apellido?.trim() || '';
-    const correo = this.nuevoUser.correo?.trim() || '';
-    const nombreUsuario = this.nuevoUser.nombreUsuario?.trim() || '';
-    const contrasena = this.nuevoUser.contrasena?.trim() || '';
-    const fechaNacimiento = this.nuevoUser.fechaNacimiento;
+  validarEnTiempoReal() {
+    this.erroresTiempoReal = { nombre: '', apellido: '', correo: '', nombreUsuario: '', contrasena: '', fechaNacimiento: '' };
+    this.formularioValido = true;
 
-    // 2. Validación de campos vacíos
-    if (!nombre || !apellido || !correo || !nombreUsuario || !contrasena || !fechaNacimiento) {
-      this.errorCrear = 'Todos los campos son obligatorios y no pueden ser solo espacios.';
-      return;
-    }
+    const n = this.nuevoUser.nombre || '';
+    const a = this.nuevoUser.apellido || '';
+    const c = this.nuevoUser.correo || '';
+    const u = this.nuevoUser.nombreUsuario || '';
+    const p = this.nuevoUser.contrasena || '';
+    const f = this.nuevoUser.fechaNacimiento;
 
-    // 3. Validación de longitud
-    if (nombre.length < 2 || apellido.length < 2 || nombreUsuario.length < 2) {
-      this.errorCrear = 'El nombre, apellido y usuario deben tener al menos 2 caracteres.';
-      return;
-    }
+    if (n.trim().length === 0 && n.length > 0) this.erroresTiempoReal.nombre = 'No puede contener solo espacios.';
+    else if (n && n.trim().length < 2) this.erroresTiempoReal.nombre = 'Debe tener al menos 2 caracteres.';
 
-    // 4. Validación de Correo (Regex)
+    if (a.trim().length === 0 && a.length > 0) this.erroresTiempoReal.apellido = 'No puede contener solo espacios.';
+    else if (a && a.trim().length < 2) this.erroresTiempoReal.apellido = 'Debe tener al menos 2 caracteres.';
+
+    if (u.trim().length === 0 && u.length > 0) this.erroresTiempoReal.nombreUsuario = 'No puede contener solo espacios.';
+    else if (u.includes(' ')) this.erroresTiempoReal.nombreUsuario = 'El usuario no puede tener espacios.';
+    else if (u && u.trim().length < 2) this.erroresTiempoReal.nombreUsuario = 'Debe tener al menos 2 caracteres.';
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(correo)) {
-      this.errorCrear = 'El formato del correo electrónico no es válido.';
-      return;
+    if (c && !emailRegex.test(c)) this.erroresTiempoReal.correo = 'Formato de correo inválido.';
+
+    const passRegex = /^(?=.*[A-Z])(?=.*\d)[^\s]{8,}$/;
+    if (p && !passRegex.test(p)) {
+      this.erroresTiempoReal.contrasena = 'Mínimo 8 caracteres, 1 mayúscula, 1 número y sin espacios.';
     }
 
-    // 5. Validación de Contraseña (Mínimo 8, 1 mayúscula, 1 minúscula, 1 número)
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
-    if (!passwordRegex.test(contrasena)) {
-      this.errorCrear = 'La contraseña debe tener al menos 8 caracteres, 1 mayúscula, 1 minúscula y 1 número.';
-      return;
+    if (f) {
+      const fechaNacDate = new Date(f);
+      const hoy = new Date();
+      if (fechaNacDate > hoy) {
+        this.erroresTiempoReal.fechaNacimiento = 'No puede ser una fecha futura.';
+      } else {
+        let edad = hoy.getFullYear() - fechaNacDate.getFullYear();
+        const mes = hoy.getMonth() - fechaNacDate.getMonth();
+        if (mes < 0 || (mes === 0 && hoy.getDate() < fechaNacDate.getDate())) edad--;
+        
+        if (edad < 16) this.erroresTiempoReal.fechaNacimiento = 'Debe ser mayor de 16 años.';
+      }
     }
 
-    // 6. Validación de Edad y Fechas
-    const fechaNacDate = new Date(fechaNacimiento);
-    const hoy = new Date();
+    const tieneErrores = Object.values(this.erroresTiempoReal).some(err => err !== '');
+    const camposLlenos = n.trim() && a.trim() && c.trim() && u.trim() && p.trim() && f;
 
-    if (fechaNacDate > hoy) {
-      this.errorCrear = 'La fecha de nacimiento no puede ser en el futuro.';
-      return;
-    }
+    this.formularioValido = !tieneErrores && !!camposLlenos;
+  }
 
-    let edad = hoy.getFullYear() - fechaNacDate.getFullYear();
-    const mes = hoy.getMonth() - fechaNacDate.getMonth();
-    
-    // Si todavía no llegó su mes de cumpleaños, o es el mes pero no llegó el día, le restamos 1
-    if (mes < 0 || (mes === 0 && hoy.getDate() < fechaNacDate.getDate())) {
-      edad--;
-    }
-
-    if (edad < 16) {
-      this.errorCrear = 'El usuario debe ser mayor de 16 años para ser registrado.';
-      return;
-    }
-
-    this.nuevoUser.nombre = nombre;
-    this.nuevoUser.apellido = apellido;
-    this.nuevoUser.correo = correo;
-    this.nuevoUser.nombreUsuario = nombreUsuario;
-    this.nuevoUser.contrasena = contrasena;
-
+  registrarUsuarioAdmin() {
     this.creando = true;
     this.errorCrear = '';
+
+    this.nuevoUser.nombre = this.nuevoUser.nombre.trim();
+    this.nuevoUser.apellido = this.nuevoUser.apellido.trim();
+    this.nuevoUser.correo = this.nuevoUser.correo.trim();
+    this.nuevoUser.nombreUsuario = this.nuevoUser.nombreUsuario.trim();
 
     this.usuariosService.crearUsuarioAdmin(this.nuevoUser).subscribe({
       next: (userCreado) => {
@@ -164,5 +167,6 @@ export class DashboardUsuariosComponent implements OnInit {
       nombre: '', apellido: '', correo: '', nombreUsuario: '',
       contrasena: '', fechaNacimiento: '', perfil: 'usuario'
     };
+    this.validarEnTiempoReal();
   }
 }
