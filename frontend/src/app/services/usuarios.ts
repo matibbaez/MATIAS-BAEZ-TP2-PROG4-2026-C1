@@ -10,8 +10,8 @@ export class UsuariosService {
   private http = inject(HttpClient);
   private authService = inject(AuthService);
 
-  private baseUrl = 'http://localhost:3000/usuarios';
-  // private baseUrl = 'https://matias-baez-tp2-prog4-2026-c1.onrender.com/usuarios';
+  // private baseUrl = 'http://localhost:3000/usuarios';
+  private baseUrl = 'https://matias-baez-tp2-prog4-2026-c1.onrender.com/usuarios';
 
   private obtenerHeaders(): HttpHeaders {
     const token = this.authService.obtenerToken() || '';

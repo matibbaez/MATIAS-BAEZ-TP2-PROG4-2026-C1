@@ -10,8 +10,8 @@ export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
   
-  private baseUrl = 'http://localhost:3000/auth';
-  // private baseUrl = 'https://matias-baez-tp2-prog4-2026-c1.onrender.com/auth';
+  // private baseUrl = 'http://localhost:3000/auth';
+  private baseUrl = 'https://matias-baez-tp2-prog4-2026-c1.onrender.com/auth';
 
   verificandoSesion = signal<boolean>(true);
   mostrarModalSesion = signal<boolean>(false);

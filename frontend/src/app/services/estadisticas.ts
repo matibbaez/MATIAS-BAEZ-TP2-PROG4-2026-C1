@@ -10,8 +10,8 @@ export class EstadisticasService {
   private http = inject(HttpClient);
   private authService = inject(AuthService);
 
-  private baseUrl = 'http://localhost:3000/estadisticas';
-  // private baseUrl = 'https://matias-baez-tp2-prog4-2026-c1.onrender.com/estadisticas';
+  // private baseUrl = 'http://localhost:3000/estadisticas';
+  private baseUrl = 'https://matias-baez-tp2-prog4-2026-c1.onrender.com/estadisticas';
 
   private obtenerHeaders(): HttpHeaders {
     return new HttpHeaders().set('Authorization', `Bearer ${this.authService.obtenerToken() || ''}`);
