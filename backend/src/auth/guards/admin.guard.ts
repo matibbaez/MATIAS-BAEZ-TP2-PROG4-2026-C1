@@ -27,7 +27,7 @@ export class AdminGuard implements CanActivate {
         throw new ForbiddenException('Área restringida: Se requieren privilegios de Administrador.');
       }
 
-      request.user = payload; 
+      request.user = payload; // asi pueden los controladores acceder a la info del usuario si es necesario sin verificar el token de nuevo
       return true;
 
     } catch (error: any) {

@@ -131,10 +131,10 @@ export class PublicacionesService {
   async estadisticasPublicacionesPorUsuario(inicio?: string, fin?: string) {
     const match: any = { activo: true };
     if (inicio && fin) {
-      match.createdAt = { $gte: new Date(inicio), $lte: new Date(fin) };
+      match.createdAt = { $gte: new Date(inicio), $lte: new Date(fin) }; // si llegan fechas, filtramos
     }
 
-    return this.publicacionModel.aggregate([
+    return this.publicacionModel.aggregate([ // en vez de find usamos aggregate para las estadísticas 
       { $match: match },
       { $group: { _id: '$autorUsuario', cantidad: { $sum: 1 } } },
       { $sort: { cantidad: -1 } }
@@ -149,7 +149,7 @@ export class PublicacionesService {
 
     return this.publicacionModel.aggregate([
       { $match: match },
-      { $unwind: '$comentarios' }, 
+      { $unwind: '$comentarios' }, // para separar cada comentario en un doc individual
       { 
         $group: { 
           _id: { $dateToString: { format: '%Y-%m-%d', date: '$comentarios.createdAt' } },
@@ -175,8 +175,8 @@ export class PublicacionesService {
           cantidadComentarios: { $size: { $ifNull: ['$comentarios', []] } } 
         } 
       },
-      { $match: { cantidadComentarios: { $gt: 0 } } }, 
-      { $sort: { cantidadComentarios: -1 } },
+      { $match: { cantidadComentarios: { $gt: 0 } } }, // gt --> greather than 0, para filtrar publicaciones sin comentarios
+      { $sort: { cantidadComentarios: -1 } }, // mayor a menor cant
       { $limit: 10 } 
     ]).exec();
   }
